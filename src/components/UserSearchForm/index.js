@@ -1,17 +1,11 @@
-import { useState } from 'react';
-import GetUserData from '../GetUserData';
+import PropTypes from 'prop-types';
 
-export default function UserSearchForm(props) {
-  const [inputState, setInputState] = useState(null);
-
-  const handleOnChange = (event) => {
-    setInputState(() => event.target.value);
-  };
-  console.log(inputState);
-
+export default function UserSearchForm({ getUser }) {
   const handleOnSubmit = (event) => {
+    const username = event.target.user.value.replace(/ /g, '');
+    console.log(username);
+    getUser(username);
     event.preventDefault();
-    GetUserData(inputState);
   };
 
   return (
@@ -19,10 +13,14 @@ export default function UserSearchForm(props) {
       <form onSubmit={handleOnSubmit}>
         <label>
           <div>GitHub username:</div>
-          <input type='text' onChange={handleOnChange} />
+          <input type='text' name='user' />
         </label>
         <button type='submit'>Search</button>
       </form>
     </div>
   );
 }
+
+UserSearchForm.propTypes = {
+  getUser: PropTypes.string,
+};

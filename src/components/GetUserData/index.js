@@ -7,11 +7,18 @@ export default function GetUserData(props) {
   const [repoData, setRepoData] = useState(null);
   const [repoError, setRepoError] = useState(null);
 
-  console.log(props.user);
+  const clearState = () => {
+    setUserError(null);
+  };
 
   useEffect(() => {
     fetch(`https://api.github.com/users/${props.user}`)
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) return response.json();
+        else {
+          setUserError(response);
+        }
+      })
       .then((json) => setUserData(json))
       .catch((error) => setUserError(error));
 
@@ -19,13 +26,19 @@ export default function GetUserData(props) {
       .then((response) => response.json())
       .then((json) => setRepoData(json))
       .catch((error) => setRepoError(error));
-  }, []);
+  }, [props.user]);
 
   if (userError !== null || repoError !== null) {
+    setTimeout(() => {
+      clearState();
+    }, 1000);
     return <div>Something went wrong :(</div>;
   }
   if (userData === null || repoData === null) {
     return <div>Loading...</div>;
+  }
+  if (props.user === null || props.user === '') {
+    return <div>Enter username to get data.</div>;
   }
 
   return (
